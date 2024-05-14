@@ -27,7 +27,7 @@ app.use('/api', routes);
 app.use(errorMiddleware);
 
 
-app.get('/NodeApi', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
