@@ -1,18 +1,24 @@
 const express = require('express');
 const router = express.Router();
+
 const masterRequestsController = require('../controllers/masterRequestsController');
 const docRequestsController = require('../controllers/docRequestsController');
+const memberController = require('../controllers/memberController');
 
-router.post('/api/insert_requests', masterRequestsController.createMasterRequest);
-router.get('/api/get_requests', masterRequestsController.getMasterRequests);
-router.get('/api/get_requests/:Req_ID', masterRequestsController.getMasterRequestById);
-router.put('/api/requests/:Req_ID', masterRequestsController.updateMasterRequest);
-router.delete('/api/requests/:Req_ID', masterRequestsController.deleteMasterRequest);
+router.post('/insert_req', masterRequestsController.create_MasterRequest);
+router.get('/get_req', masterRequestsController.get_MasterRequests);
+router.get('/get_req/:Req_ID', masterRequestsController.get_MasterRequestById);
+router.put('/req/:Req_ID', masterRequestsController.update_MasterRequest);
+router.delete('/req/:Req_ID', masterRequestsController.delete_MasterRequest);
 
-router.get('/api/get_docrequests', docRequestsController.getDocRequests);
-router.get('/api/get_docrequests/:Doc_No', docRequestsController.getDocRequestById);
-router.post('/api/insert_docrequests', docRequestsController.createDocRequest);
-router.put('/api/update_docrequests/:Doc_No', docRequestsController.updateDocRequest);
-router.delete('/api/docrequests/:Doc_No', docRequestsController.deleteDocRequest);
+router.post('/create', docRequestsController.create_DocRequest);
+router.get('/get_docreq', docRequestsController.get_DocRequests);
+router.get('/get_docreq/:Doc_No', docRequestsController.get_DocRequestById);
+router.put('/update_docreq/:Doc_No', docRequestsController.update_DocRequestByID);
+router.delete('/delete_docreq/:Doc_No', docRequestsController.delete_DocRequestByID);
+
+router.get('/get_members',memberController.get_mem);
+router.get('/get_members/:Emp_Code',memberController.get_memByEmp_Code);
 
 module.exports = router;
+

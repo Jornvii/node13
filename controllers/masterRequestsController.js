@@ -1,6 +1,6 @@
 const { connectDb, closeDb } = require("../config/db.config");
 
-const getMasterRequests = async (req, res) => {
+const get_MasterRequests = async (req, res) => {
   try {
     const db = await connectDb();
     const query = "SELECT * FROM Master_Request";
@@ -14,7 +14,7 @@ const getMasterRequests = async (req, res) => {
   }
 };
 
-const getMasterRequestById = async (req, res) => {
+const get_MasterRequestById = async (req, res) => {
   try {
     const db = await connectDb();
     const Req_ID = req.params.Req_ID;
@@ -29,7 +29,7 @@ const getMasterRequestById = async (req, res) => {
   }
 };
 
-const createMasterRequest = async (req, res) => {
+const create_MasterRequest = async (req, res) => {
   try {
     const db = await connectDb();
     const {
@@ -62,7 +62,7 @@ const createMasterRequest = async (req, res) => {
   }
 };
 
-const updateMasterRequest = async (req, res) => {
+const update_MasterRequest = async (req, res) => {
   try {
     const db = await connectDb();
     const Req_ID = req.params.Req_ID;
@@ -96,7 +96,7 @@ const updateMasterRequest = async (req, res) => {
   }
 };
 
-const deleteMasterRequest = async (req, res) => {
+const delete_MasterRequest = async (req, res) => {
   try {
     const db = await connectDb();
     const Req_ID = req.params.Req_ID;
@@ -112,9 +112,9 @@ const deleteMasterRequest = async (req, res) => {
 };
 
 module.exports = {
-  getMasterRequests,
-  getMasterRequestById,
-  createMasterRequest,
-  updateMasterRequest,
-  deleteMasterRequest,
+  get_MasterRequests,
+  get_MasterRequestById,
+  create_MasterRequest,
+  update_MasterRequest,
+  delete_MasterRequest,
 };

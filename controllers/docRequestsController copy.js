@@ -23,7 +23,7 @@ const { connectDb, closeDb } = require("../config/db.config");
 //   });
 // };
 
-const create_DocRequest = async function (req, res) {
+exports.create_DocRequest = async function (req, res) {
   try {
     const { Req_ID, Status } = req.body;
     let docNoCounter = 0;
@@ -47,7 +47,7 @@ const create_DocRequest = async function (req, res) {
   }
 };
 
-const get_DocRequests = async function (req, res) {
+exports.get_DocRequests = async function (req, res) {
   try {
     const pool = await poolPromise;
     const result = await pool.request().query("SELECT * FROM Doc_Request");
@@ -59,7 +59,7 @@ const get_DocRequests = async function (req, res) {
   }
 };
 
-const get_DocRequestById = async function (req, res) {
+exports.get_DocRequestById = async function (req, res) {
   try {
     const pool = await poolPromise;
     const Doc_No = req.params.Doc_No;
