@@ -1,53 +1,75 @@
-const { connectDb, closeDb } = require('../config/db.config');
-
+const { connectDb, closeDb } = require("../config/db.config");
 
 //http://localhost:3000/createDocRequest
 // let docNoCounter = 1;
 //doc generated for each request
-let docNoCounter = 0;
+// let docNoCounter = 0;
 
-const createDocRequest = (req, res) => {
-  const { Req_ID, Status } = req.body;
-  const Doc_No = `A${(docNoCounter + 1).toString().padStart(6, '0')}`;
-  docNoCounter++;
+// const createDocRequest = (req, res) => {
+//   const { Req_ID, Status } = req.body;
+//   const Doc_No = `A${(docNoCounter + 1).toString().padStart(6, '0')}`;
+//   docNoCounter++;
 
-  const query = `INSERT INTO Doc_Request (Req_ID, Status, Doc_No) VALUES (@Req_ID, @Status, @Doc_No)`;
-  sql.query(query, [Req_ID, Status, Doc_No], (err, result) => {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      res.json({ message: 'Document request created successfully' });
-    }
-  });
+//   const query = `INSERT INTO Doc_Request (Req_ID, Status, Doc_No) VALUES (@Req_ID, @Status, @Doc_No)`;
+//   sql.query(query, [Req_ID, Status, Doc_No], (err, result) => {
+//     if (err) {
+//       res.status(500).send(err);
+//     } else {
+//       res.json({ message: 'Document request created successfully' });
+//     }
+//   });
+// };
+
+exports.createDocRequest = async function (req, res) {
+  try {
+    const { Req_ID, Status } = req.body;
+    let docNoCounter = 0;
+    const Doc_No = `A${(docNoCounter + 1).toString().padStart(6, "0")}`;
+    docNoCounter++;
+
+    const pool = await poolPromise;
+    const result = await pool
+      .request()
+      .input("Req_ID", Req_ID)
+      .input("Status", Status)
+      .input("Doc_No", Doc_No)
+      .query(
+        "INSERT INTO Doc_Request (Req_ID, Status, Doc_No) VALUES (@Req_ID, @Status, @Doc_No)"
+      );
+
+    res.status(201).json({ message: "Document request created successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const getDocRequests = async (req, res) => {
-    try {
-        const db = await connectDb();
-        const query = 'SELECT * FROM Doc_Request';
-        const result = await db.query(query);
-        res.json(result.recordset);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err);
-    } finally {
-        await closeDb();
-    }
+exports.getDocRequests = async function (req, res) {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query("SELECT * FROM Doc_Request");
+
+    res.json(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const getDocRequestById = async (req, res) => {
-    try {
-        const db = await connectDb();
-        const Doc_No = req.params.Doc_No;
-        const query = `SELECT * FROM Doc_Request WHERE Doc_No = ${Doc_No}`;
-        const result = await db.query(query);
-        res.json(result.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err);
-    } finally {
-        await closeDb();
-    }
+exports.getDocRequestById = async function (req, res) {
+  try {
+    const pool = await poolPromise;
+    const Doc_No = req.params.Doc_No;
+    const result = await pool
+      .request()
+      .input("Doc_No", Doc_No)
+      .query("SELECT * FROM Doc_Request WHERE Doc_No = @Doc_No");
+
+    res.json(result.recordset[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // const createDocRequest = async (req, res) => {
@@ -66,41 +88,37 @@ const getDocRequestById = async (req, res) => {
 // };
 
 const updateDocRequest = async (req, res) => {
-    try {
-        const db = await connectDb();
-        const Doc_No = req.params.Doc_No;
-        const { Req_ID, Status } = req.body;
-        const query = `UPDATE Doc_Request SET Req_ID = @Req_ID, Status = @Status WHERE Doc_No = ${Doc_No}`;
-        await db.query(query, [Req_ID, Status]);
-        res.json({ message: 'Document request updated successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err);
-    } finally {
-        await closeDb();
-    }
+  try {
+    const db = await connectDb();
+    const Doc_No = req.params.Doc_No;
+    const { Req_ID, Status } = req.body;
+    const query = `UPDATE Doc_Request SET Req_ID = @Req_ID, Status = @Status WHERE Doc_No = ${Doc_No}`;
+    await db.query(query, [Req_ID, Status]);
+    res.json({ message: "Document request updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  } finally {
+    await closeDb();
+  }
 };
 
 const deleteDocRequest = async (req, res) => {
-    try {
-        const db = await connectDb();
-        const Doc_No = req.params.Doc_No;
-        const query = `DELETE FROM Doc_Request WHERE Doc_No = ${Doc_No}`;
-        await db.query(query);
-        res.json({ message: 'Document request deleted successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err);
-    } finally {
-        await closeDb();
-    }
+  try {
+    const db = await connectDb();
+    const Doc_No = req.params.Doc_No;
+    const query = `DELETE FROM Doc_Request WHERE Doc_No = ${Doc_No}`;
+    await db.query(query);
+    res.json({ message: "Document request deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  } finally {
+    await closeDb();
+  }
 };
 
 module.exports = {
-    createDocRequest,
-    getDocRequests,
-    getDocRequestById,
-    createDocRequest,
-    updateDocRequest,
-    deleteDocRequest
+  updateDocRequest,
+  deleteDocRequest,
 };
