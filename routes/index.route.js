@@ -23,5 +23,7 @@ router.get('/get_members',memberController.get_mem);
 router.get('/get_members/:Emp_Code',memberController.get_memByEmp_Code);
 router.post('/update_Member',memberController.update_MemberByCode);
 router.post('/Create_NewEmp',memberController.create_NewEmployee);
+router.delete('/delete_Member',memberController.delete_Employee);
+
 module.exports = router;
 

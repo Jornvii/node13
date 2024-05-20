@@ -1,115 +1,51 @@
 const { connectDb, closeDb } = require("../config/db.config");
-
-const get_MasterRequests = async (req, res) => {
-  try {
-    const db = await connectDb();
-    const query = "SELECT * FROM Master_Request";
-    const result = await db.query(query);
-    res.json(result.recordset);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  } finally {
-    await closeDb();
-  }
-};
-
-const get_MasterRequestById = async (req, res) => {
-  try {
-    const db = await connectDb();
-    const Req_ID = req.params.Req_ID;
-    const query = `SELECT * FROM Master_Request WHERE Req_ID = ${Req_ID}`;
-    const result = await db.query(query);
-    res.json(result.recordset[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  } finally {
-    await closeDb();
-  }
-};
-
+// const create_MasterRequest = async (req, res) => {}
 const create_MasterRequest = async (req, res) => {
   try {
-    const db = await connectDb();
-    const {
-      Part_ID,
-      Rev_ID,
-      Process_ID,
-      Division_ID,
-      Emp_ID,
-      Date_Req,
-      Date_Stamp,
-      Use_for,
-    } = req.body;
-    const query = `INSERT INTO Master_Request (Part_ID, Rev_ID, Process_ID, Division_ID, Emp_ID, Date_Req, Date_Stamp, Use_for) VALUES (@Part_ID, @Rev_ID, @Process_ID, @Division_ID, @Emp_ID, @Date_Req, @Date_Stamp, @Use_for)`;
-    await db.query(query, [
-      Part_ID,
-      Rev_ID,
-      Process_ID,
-      Division_ID,
-      Emp_ID,
-      Date_Req,
-      Date_Stamp,
-      Use_for,
-    ]);
-    res.json({ message: "Request created successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  } finally {
-    await closeDb();
-  }
-};
+    const Emp_Code = req.body.Emp_Code;
+    const pool = await poolPromise;
 
-const update_MasterRequest = async (req, res) => {
-  try {
-    const db = await connectDb();
-    const Req_ID = req.params.Req_ID;
-    const {
-      Part_ID,
-      Rev_ID,
-      Process_ID,
-      Division_ID,
-      Emp_ID,
-      Date_Req,
-      Date_Stamp,
-      Use_for,
-    } = req.body;
-    const query = `UPDATE Master_Request SET Part_ID = @Part_ID, Rev_ID = @Rev_ID, Process_ID = @Process_ID, Division_ID = @Division_ID, Emp_ID = @Emp_ID, Date_Req = @Date_Req, Date_Stamp = @Date_Stamp, Use_for = @Use_for WHERE Req_ID = ${Req_ID}`;
-    await db.query(query, [
-      Part_ID,
-      Rev_ID,
-      Process_ID,
-      Division_ID,
-      Emp_ID,
-      Date_Req,
-      Date_Stamp,
-      Use_for,
-    ]);
-    res.json({ message: "Request updated successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  } finally {
-    await closeDb();
-  }
-};
+    // Assuming empImg is in binary format, handle img format
+    // const empImg = req.body.Emp_Img ? Buffer.from(req.body.Emp_Img, 'base64') : null;
+    // console.log(req.body)
+    const result = await pool.request();
 
-const delete_MasterRequest = async (req, res) => {
-  try {
-    const db = await connectDb();
-    const Req_ID = req.params.Req_ID;
-    const query = `DELETE FROM Master_Request WHERE Req_ID = ${Req_ID}`;
-    await db.query(query);
-    res.json({ message: "Request deleted successfully" });
+    result
+      .input("a", Type.NVarChar, Emp_Code)
+      .input("b", Type.NVarChar, req.body.Emp_Name)
+      .input("c", Type.NVarChar, req.body.Emp_Surname)
+      .input("d", Type.NVarChar, req.body.empImg)
+      .input("e", Type.Int, req.body.Level_ID);
+    result.query(
+      "EXEC [trans].[tb_Employee_create] @a, @b,@c,@d,@e",
+      function (err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json({
+            success: true,
+            message: "Employee added successfully",
+            // data: result.recordset // If you want to send back the result set
+          });
+        }
+      }
+    );
   } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  } finally {
-    await closeDb();
+    console.error("Error executing query:", err.stack);
+    res
+      .status(500)
+      .send({ error: "Internal Server Error", details: err.message });
   }
 };
+const get_MasterRequests = async (req, res) => {};
+
+const get_MasterRequestById = async (req, res) => {};
+
+
+
+const update_MasterRequest = async (req, res) => {};
+
+const delete_MasterRequest = async (req, res) => {};
 
 module.exports = {
   get_MasterRequests,

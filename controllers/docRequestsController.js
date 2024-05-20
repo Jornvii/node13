@@ -27,7 +27,7 @@ const create_DocRequest = async function (req, res) {
   try {
     const { Req_ID, Status } = req.body;
     let docNoCounter = 0;
-    const Doc_No = `A${(docNoCounter + 1).toString().padStart(6, "0")}`;
+    const Doc_No = `Doc${(docNoCounter + 1).toString().padStart(6, "0")}`;
     docNoCounter++;
 
     const pool = await poolPromise;
