@@ -1,5 +1,7 @@
 const { connectDb, closeDb, poolPromise } = require("../config/db.config");
 var Type = require("mssql").TYPES;
+
+
 const get_mem = async function (req, res) {
   try {
     console.log("Request Body:", req.body);
@@ -9,7 +11,7 @@ const get_mem = async function (req, res) {
 
     const result = await pool
       .request()
-      .query("EXEC [trans].[tb_Employee_Query]");
+      .query("EXEC [trans].[tb_User_Query] ");
 
     // console.log("Query Result:", result);
     res.json(result.recordset);
